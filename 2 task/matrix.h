@@ -11,11 +11,10 @@ private:
 public: 
 	static Matrix<T> unitMatrix(int _size)   
 	{
-		size = _size;
-		unit_Matrix<T>(size);
-		for (int i = 0; i < size; i++) 
+		Matrix<T> unit_Matrix(_size);
+		for (int i = 0; i < _size; i++) 
 			unit_Matrix[i][i] = 1;
-	
+
 		return unit_Matrix;
 	}
 
@@ -66,8 +65,8 @@ public:
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				if (matrix[i][j] != AnotherMatrix[i][j])
-					return false;
-		return true;
+					return true;
+		return false;
 	}
 
 	Matrix<T> operator*(Matrix<T> const &AnotherMatrix) const
@@ -94,7 +93,16 @@ public:
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				matrix[i][j] = _matrix[i][j];
-		return Matrix(2,matrix);
+		return *this;
+	}
+
+	void print()
+	{
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++)
+				std::cout << matrix[i][j] << " ";
+			std::cout << "\n";
+		}
 	}
 
 	T* operator[](int x) 

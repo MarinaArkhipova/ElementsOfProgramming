@@ -4,7 +4,7 @@
 
 using namespace std;
 
-template <class T>
+template <class Matrix>
 class MatrixBinaryOperation 
 {
 public:
@@ -13,14 +13,14 @@ public:
 		size = _size;
 	}
 
-	Matrix<T> operator()(const Matrix<T>& one, const Matrix<T>& another)
+	Matrix operator()(const Matrix& one, const Matrix& another)
 	{
 		return one*another;
 	}
 
-	Matrix<T> unity() const
+	Matrix unity() const
 	{
-		return Matrix<T>::unitMatrix(size);
+		return Matrix::unitMatrix(size);
 	}
 private:
 	int size;
@@ -46,7 +46,7 @@ T multiply(T& a, size_t n, BinaryOperations<T>& f) {
 	int pos = 0;
 	T res = f.unity();                                          
 
-	while (1<<pos <= n) {
+	while (static_cast<size_t>(1)<<pos <= n) {
 		if (n & (1<<pos)) 
 			res = res*powA;
 		++pos;
@@ -73,7 +73,7 @@ T simple_multiply(T& number, int stepen) {
 
 void testIntegers()
 {	
-	for(int i = 0; i < 10; i++) {
+	for(int i = 0; i < 5; i++) {
 
         int stepen = rand()%10+1;
         int number = rand()%10+1;
@@ -84,7 +84,7 @@ void testIntegers()
 		try {
 			if (result != result_simple) throw 1;
 		} catch(int) {
-			cout << "\nresult: " << result << "\n" << "result_simple: " << result_simple << "\n\n";
+			cout << "\n error with integers:\n result: " << result << "\n" << "result_simple: " << result_simple << "\n\n";
 		}
 
     }
@@ -97,7 +97,7 @@ void testMatrices()
 		int size = rand()%2+1;
 		int stepen = rand()%5+1;
 		int number = rand()%10+1;
-		BinaryOperation<Matrix<int>> func;
+		MatrixBinaryOperation<Matrix<int>> func(size);
 
 		Matrix<int> a(size);
 		for (int i = 0; i < size; i++)
@@ -110,8 +110,13 @@ void testMatrices()
 		try {
 				if (result != result_simple) throw 1;
 			} catch(int) {
-				cout << "error with matrixes";
+				cout << "error with matrixes:\n";
+				result.print();
+				cout << "\n\n";
+				result_simple.print();
+				cout << "\n\n";
 			}
+			
 	}
 
 }
