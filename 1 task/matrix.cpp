@@ -53,6 +53,12 @@ public:
 				matrix[i][j] = AnotherMatrix.matrix[i][j];
 		} 
 	}
+	~Matrix<T>()
+	{
+		for(int i = 0; i < height; i++)
+			delete [] matrix[i];
+		delete [] matrix;
+	}
 
 	Matrix<T> operator*(const Matrix<T> &AnotherMatrix) 
 	{

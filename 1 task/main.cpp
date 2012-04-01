@@ -7,7 +7,7 @@
 #include "matrix.cpp"
 #include "algorithms.cpp"
 
-int getrand(const int number) {
+int getrand(int number) {
 	return (rand()%number)+1;
 }
 
@@ -26,25 +26,25 @@ void error_notice(const int result1, const int result2, int code) {
 void cheking_function() 
 {
 	Matrix<int> testMatrix(3,1);
-	int n = getrand(1000);
+	size_t n = getrand(1000);
 	int number = getrand(1000);
 
 	for (int i = 0; i < 3; i++) 
 		for (int j = 0; j < 1; j++)
 			testMatrix[i][j] = getrand(1000); 
 
-	int result = function(testMatrix,n);
-	int result_simple = another_function(testMatrix,n);
+	Transformation<Matrix<int>> transform(n); 
+	int result = PreCycleLength(testMatrix,transform);
+	int result_simple = simple_PreCycleLength(testMatrix,transform);
 
 	error_notice(result, result_simple,1);	
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 1;  j++)
 			testMatrix[i][j] = number;
-	int result_for_same_numbers = function(testMatrix,n);
-	int result_simple_for_same_numbers = another_function(number,n);	
-
-	error_notice(result_for_same_numbers, result_simple_for_same_numbers,2);
+	int result_for_same_numbers = PreCycleLength(testMatrix,transform);
+	int result_simple_for_same_numbers = simple_PreCycleLength(testMatrix,transform);
+	error_notice(result_for_same_numbers, result_simple_for_same_numbers,2);	
 	}
 
 int main() {

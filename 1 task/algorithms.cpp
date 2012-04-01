@@ -1,67 +1,82 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
-template <typename T>              
-T count (T xo, int n) {
-	T result = (xo*37 + xo*xo + 7)%n; 
-	return result;
-}
+using namespace std;
 
-template<typename T>
-int find(T& a, std::vector<T>& find_vector) {
-	for (int i = 0; i < find_vector.size(); i++) {
-		if (find_vector[i] == a)
-			return i;
+template <class T>
+class Transformation
+{
+public:              
+	Transformation(size_t size) {
+		size_ = size;
 	}
-	return -1;
-}
 
-template<typename T>
-int another_function(const T& x0, const int n) {
-	std::vector<T> myvector;
+	T operator () (T xo) const { 
+		return (xo*37 + xo*xo + 7)%size_;
+	}
+
+	size_t size() const
+	{
+		return size_;
+	}
+
+private:
+	size_t size_;
+};
+
+template <class T,  template <class> class Transformation>
+int simple_PreCycleLength(const T& x0, Transformation<T>& transform) {
+	vector<T> myvector;
 	T result = x0;
-	int index = -1;
-	while (index == -1) {
+	vector<T>::const_iterator it;
+	do {
 		myvector.push_back(result);
-		result = count(result,n);
-		index = find(result, myvector);
-	}
-	return index;
+		result = transform(result);
+		it = std::find(myvector.begin(), myvector.end(), result);
+	} while (it == myvector.end());
+	return it - myvector.begin();
 }
 
-template <typename T>
-int function(const T xo, const int n) {
-	T xcur = xo;
-	T x2 = xo;
-	for (int i = 0; i < n+1; i++) {
-		xcur = count(xcur,n);
+template <class T, template <class> class Transformation>
+T ElementInCycle(const T& xo, Transformation<T>& transform) {
+	T x_current = xo;
+	for (int i = 0; i < transform.size(); i++) {
+		x_current = transform(x_current);
 	}
+	return x_current;
+}
 
-	T xcur2 = count(xcur,n);
-	int ch = 1;
+template <class T, template <class> class Transformation>
+int CycleLength(T& element_in_cycle, Transformation<T>& transform) {
+	T x_repeat_in_cycle = transform(element_in_cycle);         
+	int length = 1;
 
-	while (xcur != xcur2) {
-		xcur2 = count(xcur2,n);
-		ch++;    // ch - length of cycle
+	while (element_in_cycle != x_repeat_in_cycle) {
+		x_repeat_in_cycle = transform(x_repeat_in_cycle);
+		length++;    
 	}
-	
-	T x3 = x2;
-	for (int i = 0; i < ch; i++) {
-		x3 = count(x3,n);
+	return length;
+}
+
+template <class T, template <class> class  Transformation>
+int PreCycleLength(const T& xo, Transformation<T>& transform) {
+	int pre_cycle_length = 0;
+	T elem_in_cycle = ElementInCycle(xo,transform);
+	int length = CycleLength(elem_in_cycle,transform);
+
+	T x1 = xo;	
+	T x2 = x1;
+	for (int i = 0; i < length; i++) {
+		x2 = transform(x2);
+	}	
+	while (x1 != x2) {
+		pre_cycle_length++;
+		x1 = transform(x1);
+		x2 = x1;
+		for (int i = 0; i < length; i++)
+			x2 = transform(x2);
 	}
-
-	
-	int last_count = 0;
-
-	while (x2 != x3) {
-	
-		last_count++;
-		x2 = count(x2,n);
-		x3 = x2;
-		for (int i = 0; i < ch; i++)
-			x3 = count(x3,n);
-	}
-
-	return last_count; 
+	return pre_cycle_length; 
 }
