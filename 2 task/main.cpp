@@ -41,9 +41,9 @@ public:
 };
 
 template <class T, template <class> class BinaryOperations> 
-T multiply(T& a, size_t n, BinaryOperations<T>& f) {
+T multiply(const T& a, size_t n, const BinaryOperations<T>& f) {
 	T powA = a;
-	int pos = 0;
+	size_t pos = 0;
 	T res = f.unity();                                          
 
 	while (static_cast<size_t>(1)<<pos <= n) {
@@ -57,7 +57,7 @@ T multiply(T& a, size_t n, BinaryOperations<T>& f) {
 }
 
 template <typename T>
-T simple_multiply(T& number, int stepen) {
+T simple_multiply(const T& number, int stepen) {
 	if (stepen == 0)
 		return 1;
 
@@ -81,12 +81,10 @@ void testIntegers()
     
         int result = multiply(number,stepen,func);
         int result_simple = simple_multiply(number,stepen);
-		try {
-			if (result != result_simple) throw 1;
-		} catch(int) {
+		if (result != result_simple) {
 			cout << "\n error with integers:\n result: " << result << "\n" << "result_simple: " << result_simple << "\n\n";
+			assert(false);
 		}
-
     }
 }
 
@@ -107,18 +105,15 @@ void testMatrices()
 		Matrix<int> result = multiply(a,stepen,func);
 		Matrix<int> result_simple = simple_multiply(a,stepen);
 		
-		try {
-				if (result != result_simple) throw 1;
-			} catch(int) {
+		if (result != result_simple) {
 				cout << "error with matrixes:\n";
 				result.print();
 				cout << "\n\n";
 				result_simple.print();
 				cout << "\n\n";
-			}
-			
+				assert(false);
+		}
 	}
-
 }
 
 int main() {
