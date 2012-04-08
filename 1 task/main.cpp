@@ -5,33 +5,32 @@
 #include "matrix.cpp"
 #include "algorithms.cpp"
 #include "matrix.cpp"
-#include "algorithms.cpp"
+
 
 int getrand(int number) {
 	return (rand()%number)+1;
 }
 
 void error_notice(const int result1, const int result2, int code) {
-	try {
-	if (result1 != result2) throw 1;
-	}
-	catch(int) {
+	if (result1 != result2) {
 		if (code == 1)
 			std::cout << "wrong answer in result with the same numbers:\n" << "function: " << result1 << " \n" << "simple_function: " << result2 << "\n";
 		if (code == 2)
 			std::cout << "wrong answer in result with the different numbers:\n" << "function: " << result1 << " \n" << "simple_function: " << result2 << "\n";
+		exit(1);
 	}
 }
 
-void cheking_function() 
+void checking_function() 
 {
 	Matrix<int> testMatrix(3,1);
-	size_t n = getrand(1000);
-	int number = getrand(1000);
+	const size_t MOD = 1000;
+	size_t n = getrand(MOD);
+	int number = getrand(MOD);
 
 	for (int i = 0; i < 3; i++) 
 		for (int j = 0; j < 1; j++)
-			testMatrix[i][j] = getrand(1000); 
+			testMatrix[i][j] = getrand(MOD); 
 
 	Transformation<Matrix<int>> transform(n); 
 	int result = PreCycleLength(testMatrix,transform);
@@ -45,12 +44,12 @@ void cheking_function()
 	int result_for_same_numbers = PreCycleLength(testMatrix,transform);
 	int result_simple_for_same_numbers = simple_PreCycleLength(testMatrix,transform);
 	error_notice(result_for_same_numbers, result_simple_for_same_numbers,2);	
-	}
+}
 
 int main() {
 
-	for (int i = 0; i < 10; i++) {
-		cheking_function();
+	for (int i = 0; i < 100; i++) {
+		checking_function();
 	}
 	std::cout << "Everything is OK!\n";
 	return 0;
