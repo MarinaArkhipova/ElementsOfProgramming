@@ -1,15 +1,20 @@
 #include <iostream>
+#include <algorithm>
 
-template <typename T>
+template <class T>
 T nod(const T& a, const T& b) {
-	if(a < b) {
-		nod(b,a);
-	} else {
-		if	(b == 0) 
-			return a;
-		else 
-		nod(b, a%b);
+	T aCopy = a;
+	T bCopy = b;	
+	
+
+	while (bCopy != 0) {
+		if (aCopy > bCopy) {
+			aCopy = aCopy % bCopy;
+			swap(aCopy,bCopy);
+		} else 
+			swap(aCopy,bCopy);
 	}
+	return aCopy;
 }
 
 class Fraction {
@@ -39,85 +44,84 @@ public:
 		denominator = denominator/divider;
 	}
 
-	Fraction& operator = (const Fraction& another_fraction) {
-		numerator = another_fraction.numerator;
-		denominator = another_fraction.denominator;
+	Fraction& operator = (const Fraction& anotherFraction) {
+		numerator = anotherFraction.numerator;
+		denominator = anotherFraction.denominator;
 		return *this;
 	}
 
-	Fraction operator + (const Fraction& another_fraction){
+	Fraction operator + (const Fraction& anotherFraction){
 		Fraction result = *this;
-		result.numerator = result.numerator * another_fraction.denominator;
-		result.numerator = result.numerator  +  another_fraction.numerator * denominator;
-		result.denominator = result.denominator*another_fraction.denominator;
+		result.numerator = result.numerator * anotherFraction.denominator;
+		result.numerator = result.numerator  +  anotherFraction.numerator * denominator;
+		result.denominator = result.denominator*anotherFraction.denominator;
 		result.reduce();
 		return result;
 	}
 
-	Fraction operator - (const Fraction& another_fraction) {
+	Fraction operator - (const Fraction& anotherFraction) {
 		Fraction result = *this;
-		result.numerator = result.numerator * another_fraction.denominator;
-		result.numerator = result.numerator - another_fraction.numerator * denominator;
-		result.denominator = result.denominator * another_fraction.denominator;
+		result.numerator = result.numerator * anotherFraction.denominator;
+		result.numerator = result.numerator - anotherFraction.numerator * denominator;
+		result.denominator = result.denominator * anotherFraction.denominator;
 		result.reduce();
 		return result;
 	}
 
-	Fraction operator * (const Fraction& another_fraction) {
+	Fraction operator * (const Fraction& anotherFraction) {
 		Fraction result = *this;
-		result.numerator = result.numerator * another_fraction.numerator;
-		result.denominator = result.denominator * another_fraction.denominator;
+		result.numerator = result.numerator * anotherFraction.numerator;
+		result.denominator = result.denominator * anotherFraction.denominator;
 		result.reduce();
 		return result;
 	}
 
-	Fraction operator / (const Fraction& another_fraction) const {
+	Fraction operator / (const Fraction& anotherFraction) const {
 		Fraction result = *this;
-		result.numerator = result.numerator * another_fraction.denominator;
-		result.denominator = result.denominator * another_fraction.numerator;
+		result.numerator = result.numerator * anotherFraction.denominator;
+		result.denominator = result.denominator * anotherFraction.numerator;
 		result.reduce();
 		return result;
 	}
 
-	bool operator == (const Fraction& another_fraction) {
-		if ((numerator == another_fraction.numerator)&&(denominator == another_fraction.denominator))
+	bool operator == (const Fraction& anotherFraction) {
+		if ((numerator == anotherFraction.numerator)&&(denominator == anotherFraction.denominator))
 			return true;
 		else return false;
 	}
 
-	bool operator != (const Fraction& another_fraction) const {
-		if ((numerator != another_fraction.numerator)||(denominator != another_fraction.denominator))
+	bool operator != (const Fraction& anotherFraction) const {
+		if ((numerator != anotherFraction.numerator)||(denominator != anotherFraction.denominator))
 			return true;
 		else return false;
 	}
 
-	bool operator > (const Fraction& another_fraction) {
-		if (numerator * another_fraction.denominator > denominator * another_fraction.numerator)
+	bool operator > (const Fraction& anotherFraction) {
+		if (numerator * anotherFraction.denominator > denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator < (const Fraction& another_fraction) {
-		if (numerator * another_fraction.denominator < denominator * another_fraction.numerator)
+	bool operator < (const Fraction& anotherFraction) {
+		if (numerator * anotherFraction.denominator < denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator >= (const Fraction& another_fraction) {
-		if (numerator * another_fraction.denominator >= denominator * another_fraction.numerator)
+	bool operator >= (const Fraction& anotherFraction) {
+		if (numerator * anotherFraction.denominator >= denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator <= (const Fraction& another_fraction) {	
-		if (numerator * another_fraction.denominator <= denominator * another_fraction.numerator)
+	bool operator <= (const Fraction& anotherFraction) {	
+		if (numerator * anotherFraction.denominator <= denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
 	Fraction& operator = (int number) {
-		*this = Fraction(number, 1);
-		return *this;
+		return *this = Fraction(number, 1);
 	}
 
 	Fraction operator + (int number) {

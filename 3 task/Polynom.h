@@ -39,12 +39,12 @@ public:
 			polynom[i] = 0;
 	}
 
-	pair<Polynom,Polynom> divide(const Polynom& another) {
+	pair<Polynom,Polynom> divide(const Polynom& another) const {
 		pair<Polynom, Polynom> result(Polynom(), *this); 
 		result.first.delete_zeros();
 		result.second.delete_zeros();
 
-		while(result.second.pow() >= another.pow() && (result.second.pow() != 0 || result.second[0] != 0)) {
+		while (result.second.pow() >= another.pow() && (result.second.pow() != 0 || result.second[0] != 0)) {
 			Polynom temp;
 			int i = result.second.pow() - another.pow();
 			temp.polynom.resize(i + 1, 0);
@@ -59,21 +59,18 @@ public:
 		return polynom.size() - 1;
 	}
 
-	Polynom& operator = (const Polynom& another) {
+	void operator = (const Polynom& another) {
 		polynom = another.polynom;
 		delete_zeros();
-		return *this;
+		//return *this;
 	}
 
 	Polynom operator + (const Polynom& another) {
 		Polynom result = *this;
 		result.polynom.resize(max(pow(), another.pow()) + 1, Fraction(0, 1));
-
-		for(int i = 0; i <= pow(); i++) 
-			result.polynom[i] = result.polynom[i] + polynom[i];
 		
 		for(int i = 0; i <= another.pow(); i++) 
-			result.polynom[i] = result.polynom[i] + another.polynom[i];
+			result.polynom[i] = result.polynom[i] + another.polynom[i]; 
 		result.delete_zeros();
 		return result;
 	}
@@ -81,9 +78,6 @@ public:
 	Polynom operator - (const Polynom& another) {
 		Polynom result = *this;
 		result.polynom.resize(max(pow(), another.pow()) + 1, Fraction(0, 1)); 
-
-		for(int i = 0; i <= pow(); i++) 
-			result.polynom[i] = result.polynom[i] + polynom[i];
 		
 		for(int i = 0; i <= another.pow(); i++)
 			result.polynom[i] = result.polynom[i] - another.polynom[i];
@@ -107,11 +101,17 @@ public:
 		return divide(another).first;
 	}
 
-	Polynom operator % (const Polynom& another)  {
+	Polynom operator % (const Polynom& another) const {
 		return divide(another).second;
 	}
 
-	bool operator == (const Polynom& another)  {
+	bool operator != (int another) const {
+		if ((*this == Polynom()) && (another == 0))
+			return false;
+		else return true;
+	}
+
+	bool operator == (const Polynom& another) const {
 		if (pow() != another.pow()) {
 			return false;
 		}
@@ -130,7 +130,7 @@ public:
 		return pow() > another.pow();
 	}
 
-	bool operator < (const Polynom& another) {
+	bool operator < (const Polynom& another) const{
 		return pow() < another.pow();
 	}
 
