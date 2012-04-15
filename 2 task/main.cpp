@@ -13,7 +13,7 @@ public:
 		size = _size;
 	}
 
-	Matrix operator()(const Matrix& one, const Matrix& another)
+	Matrix operator()(const Matrix& one, const Matrix& another) const
 	{
 		return one*another;
 	}
@@ -41,31 +41,31 @@ public:
 };
 
 template <class T, template <class> class BinaryOperations> 
-T multiply(const T& a, size_t n, const BinaryOperations<T>& f) {
-	T powA = a;
-	size_t pos = 0;
-	T res = f.unity();                                          
+T multiply(const T& element, size_t power, const BinaryOperations<T>& f) {
+	T powElement = element;
+	size_t position = 0;
+	T result = f.unity();                                          
 
-	while (static_cast<size_t>(1)<<pos <= n) {
-		if (n & (1<<pos)) 
-			res = res*powA;
-		++pos;
-		powA = powA * powA;
+	while (static_cast<size_t>(1)<<position <= power) {
+		if (power & (1<<position)) 
+			result = f(result, powElement);
+		++position;
+		powElement = f(powElement, powElement);
 	}
 
-	return res;
+	return result;
 }
 
 template <typename T>
-T simple_multiply(const T& number, int stepen) {
-	if (stepen == 0)
+T simpleMultiply(const T& number, int power) {
+	if (power == 0)
 		return 1;
 
 	T result = number;
-	stepen--;
+	power--;
 	
-	while (stepen > 0) {
-		stepen--;
+	while (power > 0) {
+		power--;
 		result = result*number;
 	}
 	return result;
@@ -80,9 +80,9 @@ void testIntegers()
         BinaryOperation<int> func;
     
         int result = multiply(number,stepen,func);
-        int result_simple = simple_multiply(number,stepen);
-		if (result != result_simple) {
-			cout << "\n error with integers:\n result: " << result << "\n" << "result_simple: " << result_simple << "\n\n";
+        int resultSimple = simpleMultiply(number,stepen);
+		if (result != resultSimple) {
+			cout << "\n error with integers:\n result: " << result << "\n" << "result_simple: " << resultSimple << "\n\n";
 			assert(false);
 		}
     }
@@ -103,13 +103,13 @@ void testMatrices()
 				a[i][j] = number;
 
 		Matrix<int> result = multiply(a,stepen,func);
-		Matrix<int> result_simple = simple_multiply(a,stepen);
+		Matrix<int> resultSimple = simpleMultiply(a,stepen);
 		
-		if (result != result_simple) {
+		if (result != resultSimple) {
 				cout << "error with matrixes:\n";
 				result.print();
 				cout << "\n\n";
-				result_simple.print();
+				resultSimple.print();
 				cout << "\n\n";
 				assert(false);
 		}

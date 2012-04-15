@@ -32,7 +32,7 @@ public:
 		}
 	}
 
-	Matrix(int _size, T** Values)  
+	Matrix(int _size, const T** values)  
 	{
 		size = _size;
 		this->matrix = new T*[size];             
@@ -42,13 +42,13 @@ public:
 		for (int i = 0; i < size; i++)
 		{
 			for (int j = 0; j < size; j++)
-				this->matrix[i][j] = Values[i][j];
+				this->matrix[i][j] = values[i][j];
 		}
 	}
               
-	Matrix(const Matrix<T>& AnotherMatrix)          
+	Matrix(const Matrix<T>& anotherMatrix)          
 	{
-		size = AnotherMatrix.size;
+		size = anotherMatrix.size;
 		matrix = new T*[size];             
 		for (int i = 0; i < size; i++)
 			matrix[i] = new T[size];
@@ -56,47 +56,46 @@ public:
 		for (int i = 0; i < size; i++)
 		{
 			for (int j = 0; j < size; j++)
-				matrix[i][j] = AnotherMatrix.matrix[i][j];
+				matrix[i][j] = anotherMatrix.matrix[i][j];
 		} 
 	}
 
-	bool operator != (Matrix<T> AnotherMatrix)
+	bool operator != (Matrix<T> anotherMatrix) const
 	{
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
-				if (matrix[i][j] != AnotherMatrix[i][j])
+				if (matrix[i][j] != anotherMatrix[i][j])
 					return true;
 		return false;
 	}
 
-	Matrix<T> operator*(Matrix<T> const &AnotherMatrix) const
+	Matrix<T> operator*(Matrix<T> const &anotherMatrix) const
 	{
-		Matrix<T> Mul(AnotherMatrix.size);
+		Matrix<T> Mul(anotherMatrix.size);
 		T  temp;
-		for (int i = 0; i < AnotherMatrix.size; i++)
-		{	for (int j = 0; j < AnotherMatrix.size; j++)
+		for (int i = 0; i < anotherMatrix.size; i++)
+		{	for (int j = 0; j < anotherMatrix.size; j++)
 			{
 				temp = 0;
-				for (int k = 0; k < AnotherMatrix.size; k++)
-					temp += matrix[i][k]*AnotherMatrix.matrix[k][j];
+				for (int k = 0; k < anotherMatrix.size; k++)
+					temp += matrix[i][k]*anotherMatrix.matrix[k][j];
 
 				Mul.Set(i, j, temp);
 			}
 		}
-
 		return Mul;
 	}
 
-	Matrix<T>& operator = (const Matrix<T> _matrix) 
+	Matrix<T>& operator = (const Matrix<T> anotherMatrix)
 	{
-		size = _matrix.size;
+		size = anotherMatrix.size;
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
-				matrix[i][j] = _matrix[i][j];
+				matrix[i][j] = anotherMatrix[i][j];
 		return *this;
 	}
 
-	void print()
+	void print() const
 	{
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++)
@@ -115,7 +114,7 @@ public:
 		return matrix[x];
 	}
 
-	void Set(int i, int j, T Value)
+	void Set(int i, int j, T Value) const
 	{
 		matrix[i][j] = Value;
 	}
