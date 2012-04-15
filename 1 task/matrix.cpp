@@ -41,15 +41,15 @@ public:
 
 	Matrix(const Matrix<T>& AnotherMatrix)          
 	{
-		this->height = AnotherMatrix.getheight();
-		this->width = AnotherMatrix.getwidth();
-		matrix = new T*[AnotherMatrix.getheight()];             
-		for (int i = 0; i < AnotherMatrix.getheight(); i++)
-			matrix[i] = new T[AnotherMatrix.getwidth()];
+		this->height = AnotherMatrix.getHeight();
+		this->width = AnotherMatrix.getWidth();
+		matrix = new T*[AnotherMatrix.getHeight()];             
+		for (int i = 0; i < AnotherMatrix.getHeight(); i++)
+			matrix[i] = new T[AnotherMatrix.getWidth()];
 
-		for (int i = 0; i < AnotherMatrix.getheight(); i++)
+		for (int i = 0; i < AnotherMatrix.getHeight(); i++)
 		{
-			for (int j = 0; j < AnotherMatrix.getwidth(); j++)
+			for (int j = 0; j < AnotherMatrix.getWidth(); j++)
 				matrix[i][j] = AnotherMatrix.matrix[i][j];
 		} 
 	}
@@ -60,12 +60,12 @@ public:
 		delete [] matrix;
 	}
 
-	Matrix<T> operator*(const Matrix<T> &AnotherMatrix) 
+	Matrix<T> operator * (const Matrix<T> &AnotherMatrix) const
 	{
-		Matrix<T> Mul(height, AnotherMatrix.getwidth());
+		Matrix<T> Mul(height, AnotherMatrix.getWidth());
 		T  temp;
 		for (int i = 0; i < height; i++)
-		{	for (int j = 0; j < AnotherMatrix.getwidth(); j++)
+		{	for (int j = 0; j < AnotherMatrix.getWidth(); j++)
 			{
 				temp = 0;
 				for (int k = 0; k < width; k++)
@@ -78,10 +78,10 @@ public:
 		return Mul;
 	}
 
-	Matrix<T> operator+(const Matrix<T>& AnotherMatrix) 
+	Matrix<T> operator + (const Matrix<T>& AnotherMatrix) 
 	{
-		int sumheight = AnotherMatrix.getheight();
-		int sumwidth = AnotherMatrix.getwidth();
+		int sumheight = AnotherMatrix.getHeight();
+		int sumwidth = AnotherMatrix.getWidth();
 		Matrix<T> Sum(sumheight, sumwidth);
 
 		for (int i = 0; i < sumheight; i++)
@@ -92,7 +92,7 @@ public:
 		return Sum;
 	}
 
-	bool operator ==(const Matrix<T>& second)
+	bool operator == (const Matrix<T>& second)
 	{
 		for (int i = 0; i < this->height; i++)
 			for (int j = 0; j < this->width; j++)
@@ -104,13 +104,14 @@ public:
 
 	Matrix<T> operator = (const Matrix<T> &_matrix) 
 	{
-		height = _matrix.getheight();
-		width = _matrix.getwidth();
+		height = _matrix.getHeight();
+		width = _matrix.getWidth();
 		for (int i = 0; i < height; i++)
 			for (int j = 0; j < width; j++)
 				matrix[i][j] = _matrix[i][j];
 		return Matrix<T>(height,width,matrix);
 	}
+
 	bool operator != (const Matrix<T> AnotherMatrix) {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++)
@@ -121,7 +122,7 @@ public:
 	}
 
 
-	Matrix<T> operator+(const int number)
+	Matrix<T> operator + (const int number)
 	{
 		for (int i = 0; i < height; i++)
 			for (int j = 0; j < width; j++)
@@ -129,7 +130,7 @@ public:
 		return Matrix<T>(height,width,matrix);
 	}
 
-	Matrix<T> operator*(const int number){
+	Matrix<T> operator * (const int number) const {
 		Matrix<T> result(height, width);
 		for (int i = 0; i < height; i++){
 			for (int j = 0; j < width; j++)
@@ -138,7 +139,7 @@ public:
 		return result; 
 	}
 
-	Matrix<T> operator%(const int number) 
+	Matrix<T> operator % (int number) 
 	{
 		Matrix<T> result(height,width);
 		for (int i = 0; i < height; i++)
@@ -147,22 +148,22 @@ public:
 		return result;
 	}
 
-	T* operator[](int x) 
+	T* operator [](int x) 
 	{
 		return matrix[x];
 	}
 
-	const T* operator[](int x) const // для присвоения матрицы к матрице. const
+	const T* operator [] (int x) const // для присвоения матрицы к матрице. const
 	{
 		return matrix[x];
 	}
 
-	int getwidth() const
+	int getWidth() const
 	{
 		return width;
 	}
 
-	int getheight() const
+	int getHeight() const
 	{
 		return height;
 	}

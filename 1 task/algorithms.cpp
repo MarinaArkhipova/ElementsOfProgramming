@@ -13,8 +13,8 @@ public:
 		size_ = size;
 	}
 
-	T operator () (T xo) const { 
-		return (xo*37 + xo*xo + 7)%size_;
+	T operator () (const T& element) const { 
+		return (element*37 + element*element + 7)%size_;
 	}
 
 	size_t size() const
@@ -27,21 +27,21 @@ private:
 };
 
 template <class T,  template <class> class Transformation>
-int simple_PreCycleLength(const T& x0, Transformation<T>& transform) {
-	vector<T> myvector;
-	T result = x0;
+int simplePreCycleLength(const T& startElement, const Transformation<T>& transform) {
+	vector<T> _vector;
+	T element = startElement;
 	vector<T>::const_iterator it;
 	do {
-		myvector.push_back(result);
-		result = transform(result);
-		it = std::find(myvector.begin(), myvector.end(), result);
-	} while (it == myvector.end());
-	return it - myvector.begin();
+		_vector.push_back(element);
+		element = transform(element);
+		it = std::find(_vector.begin(), _vector.end(), element);
+	} while (it == _vector.end());
+	return it - _vector.begin();
 }
 
 template <class T, template <class> class Transformation>
-T ElementInCycle(const T& xo, Transformation<T>& transform) {
-	T x_current = xo;
+T elementInCycle(const T& startElement, const Transformation<T>& transform) {
+	T x_current = startElement;
 	for (int i = 0; i < transform.size(); i++) {
 		x_current = transform(x_current);
 	}
@@ -49,34 +49,34 @@ T ElementInCycle(const T& xo, Transformation<T>& transform) {
 }
 
 template <class T, template <class> class Transformation>
-int CycleLength(T& element_in_cycle, Transformation<T>& transform) {
-	T x_repeat_in_cycle = transform(element_in_cycle);         
+int cycleLength(T& elementInCycle, const Transformation<T>& transform) {
+	T xRepeatInCycle = transform(elementInCycle);         
 	int length = 1;
 
-	while (element_in_cycle != x_repeat_in_cycle) {
-		x_repeat_in_cycle = transform(x_repeat_in_cycle);
+	while (elementInCycle != xRepeatInCycle) {
+		xRepeatInCycle = transform(xRepeatInCycle);
 		length++;    
 	}
 	return length;
 }
 
 template <class T, template <class> class  Transformation>
-int PreCycleLength(const T& xo, Transformation<T>& transform) {
-	int pre_cycle_length = 0;
-	T elem_in_cycle = ElementInCycle(xo,transform);
-	int length = CycleLength(elem_in_cycle,transform);
+int preCycleLength(const T& startElement, const Transformation<T>& transform) {
+	int preCycleLength = 0;
+	T elemInCycle = elementInCycle(startElement,transform);
+	int length = cycleLength(elemInCycle,transform);
 
-	T x1 = xo;	
-	T x2 = x1;
+	T element1 = startElement;	
+	T element2 = element1;
 	for (int i = 0; i < length; i++) {
-		x2 = transform(x2);
+		element2 = transform(element2);
 	}	
-	while (x1 != x2) {
-		pre_cycle_length++;
-		x1 = transform(x1);
-		x2 = x1;
+	while (element1 != element2) {
+		preCycleLength++;
+		element1 = transform(element1);
+		element2 = element1;
 		for (int i = 0; i < length; i++)
-			x2 = transform(x2);
+			element2 = transform(element2);
 	}
-	return pre_cycle_length; 
+	return preCycleLength; 
 }
