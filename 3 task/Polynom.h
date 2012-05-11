@@ -1,6 +1,7 @@
 #include <vector>
 #include <utility>
 #include <ostream>
+#include <cassert>
 #include "Fraction.h"
 
 using namespace std;
@@ -11,58 +12,71 @@ private:
 
 public:
 
-	Polynom() {
-		polynom.resize(1, Fraction(0, 1));
-	}
+	Polynom() : polynom(1, Fraction(0, 1)) { }
 
 	Polynom(const Polynom& another) {
 		polynom = another.polynom;
-		delete_zeros();
 	}
 
 	Polynom(vector<int>& another) {
 		polynom.resize(another.size(), 0);
-		for (int i = 0; i < another.size(); i++) {
+		for (size_t i = 0; i < another.size(); i++) {
 			polynom[i] = another[i];
 		}
-		delete_zeros();
+		deleteZeros();
 	}
 	
-	void delete_zeros() {		
-		while ((polynom.back() == 0) && (polynom.size() > 1)) {
+	void deleteZeros() {	
+		Fraction toSee = polynom.back();
+		while ((polynom.size() > 1) && (polynom.back().getNumerator() == 0)) {
 			polynom.pop_back();
 		}
 	}
 
+	void deleteSignes() {
+		for (int i = 0; i <= pow(); i++) {
+			if (polynom[i].getNumerator() < 0 && polynom[i].getDenominator() < 0) {
+				Fraction current(-1,-1);
+				polynom[i] = polynom[i]*current;
+			}	
+		}
+	}
+
+
 	void FillZeros() {
-		for (int i = 0; i < polynom.size(); i++)
+		for (size_t i = 0; i < polynom.size(); i++)
 			polynom[i] = 0;
 	}
 
 	pair<Polynom,Polynom> divide(const Polynom& another) const {
 		pair<Polynom, Polynom> result(Polynom(), *this); 
-		result.first.delete_zeros();
-		result.second.delete_zeros();
+		result.first.deleteZeros();
+		result.second.deleteZeros();
 
-		while (result.second.pow() >= another.pow() && (result.second.pow() != 0 || result.second[0] != 0)) {
+		while (result.second.pow() >= another.pow() && (result.second.pow() != 0 || result.second[0] != 0)/* && result.second.polynom[0].getNumerator() != 0*/) {
 			Polynom temp;
 			int i = result.second.pow() - another.pow();
 			temp.polynom.resize(i + 1, 0);
 			temp.polynom[i] = result.second[result.second.pow()] / another[another.pow()];
+			temp.deleteSignes();
 			result.first = result.first + temp;
 			result.second = result.second - temp*another;
+
+			result.second.deleteZeros();
+			result.first.deleteSignes();
+			result.second.deleteSignes();			
 		}
 		return result;
 	}
 
 	int pow() const {
-		return polynom.size() - 1;
+		return static_cast<int>(polynom.size()) - 1;
 	}
 
-	void operator = (const Polynom& another) {
+	Polynom& operator = (const Polynom& another) {
 		polynom = another.polynom;
-		delete_zeros();
-		//return *this;
+		deleteZeros();
+		return *this;
 	}
 
 	Polynom operator + (const Polynom& another) {
@@ -71,7 +85,7 @@ public:
 		
 		for(int i = 0; i <= another.pow(); i++) 
 			result.polynom[i] = result.polynom[i] + another.polynom[i]; 
-		result.delete_zeros();
+		result.deleteZeros();
 		return result;
 	}
 
@@ -82,7 +96,7 @@ public:
 		for(int i = 0; i <= another.pow(); i++)
 			result.polynom[i] = result.polynom[i] - another.polynom[i];
 		
-		result.delete_zeros();
+		result.deleteZeros();
 		return result;
 	}
 
@@ -106,7 +120,7 @@ public:
 	}
 
 	bool operator != (int another) const {
-		if ((*this == Polynom()) && (another == 0))
+		if ((*this == Polynom() || (polynom[0].getNumerator() == 0)) && (another == 0))
 			return false;
 		else return true;
 	}
@@ -127,7 +141,26 @@ public:
 	}
 
 	bool operator > (const Polynom& another) {
-		return pow() > another.pow();
+		if (pow() == 0 && another.pow() == 0) {
+			if (polynom[0] > another.polynom[0])
+				return true;
+			else return false;
+		}
+
+		if (pow() > another.pow())
+			return true;
+		if (pow() == another.pow()) {
+			int power = pow();
+			while (power != 0) { 
+				if (polynom[power] > another.polynom[power])
+					return true;
+				if (polynom[power] == another.polynom[power])
+					power--;
+				else return false;
+			}
+			return polynom[power] > another.polynom[power];
+		}
+		else return false;
 	}
 
 	bool operator < (const Polynom& another) const{
@@ -145,44 +178,14 @@ public:
 	const Fraction& operator [] (int i) const {
 		return polynom[i];
 	}
-
-	void Print() {
-		bool notFirst = false;
-
-		for (int i = pow(); i > 1; i--) {
-			if (polynom[i] != 0) {
-				if ((polynom[i] > 0) && notFirst) {
-					cout << "+";
-				}
-				if (polynom[i] != 1) {
-					polynom[i].Print();
-					cout << "*";
-				}
-
-				cout << "x^" << i << " ";
-			}
-			notFirst = true;
+	friend std::ostream& operator<<(std::ostream& os, const Polynom& polynomial)
+	{
+		os << polynomial.pow() << " :";
+		for (int i = 0; i <= polynomial.pow(); ++i) {
+			os << " " << polynomial[i];
 		}
-
-		if (pow() > 0) {
-			if ((polynom[1] > 0) && notFirst) {
-				cout << "+";
-			}
-			if (polynom[1] != 1) {
-				polynom[1].Print();
-				cout << "*";
-			}
-			cout << "x ";
-		}
-
-		if (polynom[0] > 0) {
-			cout << "+";
-			polynom[0].Print();
-		} else 
-			if (polynom[0] < 0) {
-				polynom[0].Print();
-			}
-		}
+		return os;
+	}
 
 };
 

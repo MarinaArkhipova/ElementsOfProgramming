@@ -6,8 +6,9 @@ T nod(const T& a, const T& b) {
 	T aCopy = a;
 	T bCopy = b;	
 	
-
-	while (bCopy != 0) {
+	if (aCopy == bCopy)
+		return aCopy;
+	while (!(bCopy == T())) {
 		if (aCopy > bCopy) {
 			aCopy = aCopy % bCopy;
 			swap(aCopy,bCopy);
@@ -17,15 +18,20 @@ T nod(const T& a, const T& b) {
 	return aCopy;
 }
 
+long long abs(long long x)
+{
+	if (x < 0) x = -x;
+	return x;
+}
+
 class Fraction {
 private:
-	int numerator;
-	int denominator;
+	long long numerator;
+	long long denominator;
 
 public:
-	Fraction(int a, int b) {
-		numerator = a;
-		denominator = b;	
+	Fraction(long long a, long long b) : numerator(a), denominator(b)
+	{	
 		reduce();
 	}
 
@@ -34,12 +40,17 @@ public:
 		denominator = another.denominator;
 	}
 
-	Fraction(const int another) {
-		Fraction(another, 1);
+	Fraction(long long number) : numerator(number), denominator(1)
+	{
+		reduce();
 	}
 
 	void reduce() {
-		int divider = nod(abs(numerator), abs(denominator));
+		if (denominator <  0) {
+			denominator *= -1;
+			numerator *= -1;
+		}
+		long long divider = nod(abs(numerator), denominator);
 		numerator = numerator/divider;
 		denominator = denominator/divider;
 	}
@@ -50,41 +61,30 @@ public:
 		return *this;
 	}
 
-	Fraction operator + (const Fraction& anotherFraction){
-		Fraction result = *this;
-		result.numerator = result.numerator * anotherFraction.denominator;
-		result.numerator = result.numerator  +  anotherFraction.numerator * denominator;
-		result.denominator = result.denominator*anotherFraction.denominator;
-		result.reduce();
-		return result;
+	Fraction operator + (const Fraction& anotherFraction)
+	{
+		return Fraction(numerator * anotherFraction.denominator +
+						anotherFraction.numerator * denominator,
+						denominator*anotherFraction.denominator);
 	}
 
 	Fraction operator - (const Fraction& anotherFraction) {
-		Fraction result = *this;
-		result.numerator = result.numerator * anotherFraction.denominator;
-		result.numerator = result.numerator - anotherFraction.numerator * denominator;
-		result.denominator = result.denominator * anotherFraction.denominator;
-		result.reduce();
-		return result;
+		return Fraction(numerator * anotherFraction.denominator -
+						anotherFraction.numerator * denominator,
+						denominator*anotherFraction.denominator);
 	}
 
 	Fraction operator * (const Fraction& anotherFraction) {
-		Fraction result = *this;
-		result.numerator = result.numerator * anotherFraction.numerator;
-		result.denominator = result.denominator * anotherFraction.denominator;
-		result.reduce();
-		return result;
+		return Fraction(numerator * anotherFraction.numerator,
+						denominator * anotherFraction.denominator);
 	}
 
 	Fraction operator / (const Fraction& anotherFraction) const {
-		Fraction result = *this;
-		result.numerator = result.numerator * anotherFraction.denominator;
-		result.denominator = result.denominator * anotherFraction.numerator;
-		result.reduce();
-		return result;
+		return Fraction(numerator * anotherFraction.denominator,
+						denominator * anotherFraction.numerator);
 	}
 
-	bool operator == (const Fraction& anotherFraction) {
+	bool operator == (const Fraction& anotherFraction) const {
 		if ((numerator == anotherFraction.numerator)&&(denominator == anotherFraction.denominator))
 			return true;
 		else return false;
@@ -96,25 +96,25 @@ public:
 		else return false;
 	}
 
-	bool operator > (const Fraction& anotherFraction) {
+	bool operator > (const Fraction& anotherFraction) const {
 		if (numerator * anotherFraction.denominator > denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator < (const Fraction& anotherFraction) {
+	bool operator < (const Fraction& anotherFraction) const {
 		if (numerator * anotherFraction.denominator < denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator >= (const Fraction& anotherFraction) {
+	bool operator >= (const Fraction& anotherFraction) const {
 		if (numerator * anotherFraction.denominator >= denominator * anotherFraction.numerator)
 			return true;
 		else return false;
 	}
 
-	bool operator <= (const Fraction& anotherFraction) {	
+	bool operator <= (const Fraction& anotherFraction) const {	
 		if (numerator * anotherFraction.denominator <= denominator * anotherFraction.numerator)
 			return true;
 		else return false;
@@ -152,18 +152,24 @@ public:
 		else return false;
 	}
 
-	int getNumerator() const {
+	long long getNumerator() const {
 		return numerator;
 	}
 
-	int getDenominator() const {
+	long long getDenominator() const {
 		return denominator;
 	}
 
+// FIXME operator<<
 	void Print() {
 		if(getDenominator() != 1) 
 			std::cout << "(" << getNumerator() << "/" << getDenominator() << ")";
-		else 
+		else
 			std::cout << getNumerator();
+	}
+	friend std::ostream& operator<<(std::ostream& os, const Fraction& fraction)
+	{
+		os << fraction.getNumerator() << "/" << fraction.getDenominator();
+		return os;
 	}
 };
